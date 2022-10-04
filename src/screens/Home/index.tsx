@@ -1,17 +1,40 @@
 import { useState } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, FlatList } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { Participant } from '../../components/Participant';
 import { styles } from './styles'
 
 export function Home() {
-  const participants = ['Igor', 'Byron', 'Diego', 'Paula', 'Laura', 'Joana', 'Yasmin', 'Mayk', 'Isa', 'Bruna', 'Jéssica', 'Monstro'];
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [currentParticipant, setCurrentParticipant] = useState("");
 
   function handleParticipantAdd() {
-    console.log('participantes');
+    if(participants.includes(currentParticipant)) {
+      return Alert.alert("Usuário já cadastrado!", "Este nome já existe dentro da base de dados. Por favor, tente outro!")
+    }
+
+    setParticipants(prevState => [...prevState, currentParticipant]);
   }
 
   function handleParticipantRemove(name: string) {
-    console.log(`Você removeu o participante: ${name}`);
+    Alert.alert("Remoção de usuário!", `Deseja remover o usuário ${name}?`, [
+      {
+        text: 'Sim',
+        onPress: () => {
+          const index = participants.indexOf(name);
+          if(index > -1) {
+            setParticipants([
+              ...participants.slice(0, index),
+              ...participants.slice(index + 1, participants.length)
+            ])
+            return Alert.alert("Usuário deletado!");
+          }
+        }
+      },
+      {
+        text: 'Não',
+        style: 'cancel'
+      }
+    ])
   }
 
   return (
@@ -23,6 +46,8 @@ export function Home() {
             style={styles.input}
             placeholder='Nome do participante' 
             placeholderTextColor='#6B6B6B'
+            value={currentParticipant}
+            onChangeText={setCurrentParticipant}
         />
         <TouchableOpacity style={styles.plusButton} onPress={handleParticipantAdd}>
             <Text style={styles.buttonText}>+</Text>
