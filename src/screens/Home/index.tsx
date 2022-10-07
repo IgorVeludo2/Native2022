@@ -13,22 +13,14 @@ export function Home() {
     }
 
     setParticipants(prevState => [...prevState, currentParticipant]);
+    setCurrentParticipant('');
   }
 
   function handleParticipantRemove(name: string) {
     Alert.alert("Remoção de usuário!", `Deseja remover o usuário ${name}?`, [
       {
         text: 'Sim',
-        onPress: () => {
-          const index = participants.indexOf(name);
-          if(index > -1) {
-            setParticipants([
-              ...participants.slice(0, index),
-              ...participants.slice(index + 1, participants.length)
-            ])
-            return Alert.alert("Usuário deletado!");
-          }
-        }
+        onPress: () => setParticipants(prevState => prevState.filter(participants => participants !== name))
       },
       {
         text: 'Não',
